@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom'
 
 const Otsikko = props => {
     return (
-        <h1>{props.kurssi}</h1>
+        <h1>{props.nimi}</h1>
     )
 }
 const Sisalto = props => {
     const sisalto = props.osat.map((o) =>
-        <Osa nimi={o.nimi} tehtavia={o.tehtavia} key={o.nimi}/>
+        <Osa nimi={o.nimi} tehtavia={o.tehtavia} key={o.nimi} />
     )
     return (
         <div>
@@ -32,27 +32,29 @@ const Yhteensa = props => {
 }
 
 const App = () => {
-    const kurssi = 'Half Stack -sovelluskehitys'
-    const osat = [
-        {
-            nimi: 'Reactin perusteet',
-            tehtavia: 10
-        },
-        {
-            nimi: 'Tiedonvälitys propseilla',
-            tehtavia: 7
-        },
-        {
-            nimi: 'Komponenttien tila',
-            tehtavia: 14
-        }
-    ]
+    const kurssi = {
+        nimi: 'Half Stack -sovelluskehitys',
+        osat: [
+            {
+                nimi: 'Reactin perusteet',
+                tehtavia: 10
+            },
+            {
+                nimi: 'Tiedonvälitys propseilla',
+                tehtavia: 7
+            },
+            {
+                nimi: 'Komponenttien tila',
+                tehtavia: 14
+            }
+        ]
+    }
     return (
         <div>
             <div>
-                <Otsikko kurssi={kurssi} />
-                <Sisalto osat={osat} />
-                <Yhteensa osat={osat} />
+                <Otsikko nimi={kurssi.nimi} />
+                <Sisalto osat={kurssi.osat} />
+                <Yhteensa osat={kurssi.osat} />
             </div>
         </div>
     )

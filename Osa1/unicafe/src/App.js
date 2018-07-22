@@ -29,8 +29,15 @@ class App extends Component {
     })
   }
 
-  render() {      
-    return (
+  render() {
+    const keskiarvo = this.state.hyva - this.state.huono
+    let sum = (this.state.hyva + this.state.neutraali + this.state.huono)
+    if (sum === 0) {
+      sum = 1
+    } 
+    const p = this.state.hyva / sum * 100     
+    const positiivisia = p.toFixed(2)
+      return (
       <div className="App">
         <h2>anna palautetta</h2>
         <button onClick={this.klikHyva}>Hyvä</button>
@@ -40,6 +47,8 @@ class App extends Component {
         <p>Hyvä {this.state.hyva}</p>
         <p>Neutraali {this.state.neutraali}</p>
         <p>Huono {this.state.huono}</p>
+        <p>Keskiarvo {keskiarvo}</p>
+        <p>Positiivisia {positiivisia}%</p>
         </div>
         
         

@@ -58,6 +58,13 @@ class App extends Component {
 
 const Statistics = ({ hyva, neutraali, huono }) => {
   const summa = hyva + neutraali + huono
+  if (summa === 0) {
+    return (
+      <div>
+        <p>ei yhtään palautetta annettu -_-;</p>
+      </div>
+    )
+  } 
   return (
     <div>
       <p>Hyvä {hyva}</p>
@@ -82,10 +89,7 @@ const Statistic = ({ hyva, huono }) => {
 }
 
 const Positive = ({ summa, hyva }) => {
-  let positiivisia = 0
-  if (summa !== 0) {
-    positiivisia = (hyva / summa) * 100
-  }
+  const positiivisia = (hyva / summa) * 100
   return (
     <p>Positiivisia {positiivisia.toFixed(2)}%</p>
   )

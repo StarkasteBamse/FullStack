@@ -11,22 +11,12 @@ class App extends Component {
     }
   }
 
-  klikHyva = () => {
-    this.setState({
-      hyva: this.state.hyva + 1
-    })
-  }
-
-  klikNeutraali = () => {
-    this.setState({
-      neutraali: this.state.neutraali + 1
-    })
-  }
-
-  klikHuono = () => {
-    this.setState({
-      huono: this.state.huono + 1
-    })
+  klik = (mita) => {
+    return () => {
+      this.setState({
+        [mita.mika]: mita.arvo
+      })
+    }
   }
 
   render() {
@@ -34,15 +24,15 @@ class App extends Component {
       <div className="App">
         <h2>anna palautetta</h2>
         <Button
-          handleClick={this.klikHyva}
+          handleClick={this.klik({ mika: 'hyva', arvo: this.state.hyva + 1 })}
           text={'Hyvä'}
         />
         <Button
-          handleClick={this.klikNeutraali}
+          handleClick={this.klik({mika:'neutraali', arvo: this.state.neutraali + 1})}
           text={'Neutraali'}
         />
         <Button
-          handleClick={this.klikHuono}
+          handleClick={this.klik({mika:'huono', arvo:this.state.huono + 1})}
           text={'Huono'}
         />
         <h2>statistiikka</h2>
@@ -64,7 +54,7 @@ const Statistics = ({ hyva, neutraali, huono }) => {
         <p>ei yhtään palautetta annettu -_-;</p>
       </div>
     )
-  } 
+  }
   return (
     <div>
       <p>Hyvä {hyva}</p>

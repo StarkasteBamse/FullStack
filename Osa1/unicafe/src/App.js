@@ -30,30 +30,71 @@ class App extends Component {
   }
 
   render() {
-    const keskiarvo = this.state.hyva - this.state.huono
-    let sum = (this.state.hyva + this.state.neutraali + this.state.huono)
-    if (sum === 0) {
-      sum = 1
-    } 
-    const p = this.state.hyva / sum * 100     
-    const positiivisia = p.toFixed(2)
-      return (
+    return (
       <div className="App">
         <h2>anna palautetta</h2>
-        <button onClick={this.klikHyva}>Hyvä</button>
-        <button onClick={this.klikNeutraali}>Neutraali</button>
-        <button onClick={this.klikHuono}>Huono</button>
+        <Button
+          handleClick={this.klikHyva}
+          text={'Hyvä'}
+        />
+        <Button
+          handleClick={this.klikNeutraali}
+          text={'Neutraali'}
+        />
+        <Button
+          handleClick={this.klikHuono}
+          text={'Huono'}
+        />
         <h2>statistiikka</h2>
-        <p>Hyvä {this.state.hyva}</p>
-        <p>Neutraali {this.state.neutraali}</p>
-        <p>Huono {this.state.huono}</p>
-        <p>Keskiarvo {keskiarvo}</p>
-        <p>Positiivisia {positiivisia}%</p>
-        </div>
-        
-        
+        <Statistics
+          hyva={this.state.hyva}
+          neutraali={this.state.neutraali}
+          huono={this.state.huono}
+        />
+      </div>
     );
   }
 }
+
+const Statistics = ({ hyva, neutraali, huono }) => {
+  const summa = hyva + neutraali + huono
+  return (
+    <div>
+      <p>Hyvä {hyva}</p>
+      <p>Neutraali {neutraali}</p>
+      <p>Huono {huono}</p>
+      <Statistic
+        hyva={hyva}
+        huono={huono}
+      />
+      <Positive
+        hyva={hyva}
+        summa={summa}
+      />
+    </div>)
+}
+
+const Statistic = ({ hyva, huono }) => {
+  const keskiarvo = hyva - huono
+  return (
+    <p>Keskiarvo {keskiarvo}</p>
+  )
+}
+
+const Positive = ({ summa, hyva }) => {
+  let positiivisia = 0
+  if (summa !== 0) {
+    positiivisia = (hyva / summa) * 100
+  }
+  return (
+    <p>Positiivisia {positiivisia.toFixed(2)}%</p>
+  )
+}
+
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>
+    {text}
+  </button>
+)
 
 export default App;

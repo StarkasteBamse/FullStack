@@ -28,11 +28,11 @@ class App extends Component {
           text={'Hyvä'}
         />
         <Button
-          handleClick={this.klik({mika:'neutraali', arvo: this.state.neutraali + 1})}
+          handleClick={this.klik({ mika: 'neutraali', arvo: this.state.neutraali + 1 })}
           text={'Neutraali'}
         />
         <Button
-          handleClick={this.klik({mika:'huono', arvo:this.state.huono + 1})}
+          handleClick={this.klik({ mika: 'huono', arvo: this.state.huono + 1 })}
           text={'Huono'}
         />
         <h2>statistiikka</h2>
@@ -56,32 +56,50 @@ const Statistics = ({ hyva, neutraali, huono }) => {
     )
   }
   return (
-    <div>
-      <p>Hyvä {hyva}</p>
-      <p>Neutraali {neutraali}</p>
-      <p>Huono {huono}</p>
-      <Statistic
-        hyva={hyva}
-        huono={huono}
-      />
-      <Positive
-        hyva={hyva}
-        summa={summa}
-      />
-    </div>)
+    <table>
+      <tbody>
+        <tr>
+          <td>Hyvä</td>
+          <td>{hyva}</td>
+        </tr>
+        <tr>
+          <td>Neutraali</td>
+          <td>{neutraali}</td>
+        </tr>
+        <tr>
+          <td>Huono</td>
+          <td>{huono}</td>
+        </tr>
+        <Statistic
+          hyva={hyva}
+          huono={huono}
+        />
+        <Positive
+          hyva={hyva}
+          summa={summa}
+        />
+      </tbody>
+    </table>
+  )
 }
 
 const Statistic = ({ hyva, huono }) => {
   const keskiarvo = hyva - huono
   return (
-    <p>Keskiarvo {keskiarvo}</p>
+    <tr>
+      <td>Keskiarvo</td>
+      <td>{keskiarvo}</td>
+    </tr>
   )
 }
 
 const Positive = ({ summa, hyva }) => {
   const positiivisia = (hyva / summa) * 100
   return (
-    <p>Positiivisia {positiivisia.toFixed(2)}%</p>
+    <tr>
+      <td>Positiivisia</td>
+      <td>{positiivisia.toFixed(2)}%</td>
+    </tr>
   )
 }
 

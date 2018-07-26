@@ -22,6 +22,7 @@ class App extends React.Component {
     )}
 
   render() {
+    const popular = this.state.votes.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0)
     return (
       <div>
         {this.props.anecdotes[this.state.selected]}
@@ -29,6 +30,9 @@ class App extends React.Component {
         <p>anecdote #{this.state.selected+1} has {this.state.votes[this.state.selected]} votes</p>
         <button onClick={this.vaihda}>nappi</button>
         <button onClick={this.aanesta}>aanesta</button>
+        <h3>Most popular anecdote, in this sitting</h3>
+        {this.props.anecdotes[popular]}
+        <p>has {this.state.votes[popular]} votes</p>
       </div>
     )
   }

@@ -2,13 +2,12 @@ import React from 'react';
 import Filter from './components/Filter'
 import ListPersons from './components/ListPersons'
 import AddPerson from './components/AddPerson'
-
+import axios from 'axios'
 class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             persons: [
-                { name: 'Arto Hellas', nro: '050-1234567' }
             ],
             newName: '',
             newNro: '',
@@ -16,11 +15,19 @@ class App extends React.Component {
         }
     }
 
+    componentDidMount() {
+        axios
+            .get('http://localhost:3001/persons')
+            .then(response =>
+                this.setState({ persons: response.data }))
+    }
+
     addName = (event) => {
         event.preventDefault()
         const newPerson = {
             name: this.state.newName,
-            nro: this.state.newNro
+            number: this.state.newNro,
+            id: this.state.persons[this.state.persons.length - 1].id + 1
         }
         if (this.state.persons.find((person) => person.name === newPerson.name)) {
             alert('nimi ' + newPerson.name + ' löytyy jo')
@@ -50,7 +57,7 @@ class App extends React.Component {
     }
 
     render() {
-
+        
         return (
             <div>
                 <h2>Puhelinluettelo</h2>

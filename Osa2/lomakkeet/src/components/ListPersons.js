@@ -8,7 +8,7 @@ const ListPersons = ({ persons, filter }) => {
             })
 
     }
-    return persons.map(person => <li key={person.name}>{person.name} {person.nro}</li>)
+    return persons.map(person => <li key={person.id}>{person.name} {person.number}</li>)
 }
 
 export default ListPersons

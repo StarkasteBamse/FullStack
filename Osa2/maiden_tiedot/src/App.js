@@ -31,7 +31,6 @@ class App extends Component {
   render() {
     const toShow = () => {
       const list = this.state.list
-      console.log(list)
       if (list.length === 0 && this.state.search.length > 0) {
         return <p>no country found with search</p>;
       } else if (list.length === 0 || list.length > 10) {

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ListPersons = ({ persons, filter }) => {
+const ListPersons = ({ persons, filter, deletePerson }) => {
     if (filter) {
         persons =
             persons.filter(function (person) {
@@ -8,7 +8,11 @@ const ListPersons = ({ persons, filter }) => {
             })
 
     }
-    return persons.map(person => <li key={person.id}>{person.name} {person.number}</li>)
+    return persons.map(person => <tr key={person.id}>
+        <td>{person.name}</td>
+        <td>{person.number}</td>
+        <td><button onClick={() => deletePerson(person)}>poista</button></td>
+        </tr>)
 }
 
 export default ListPersons

@@ -2,13 +2,12 @@ import React from 'react';
 import Filter from './components/Filter'
 import ListPersons from './components/ListPersons'
 import AddPerson from './components/AddPerson'
-import axios from 'axios'
+import personService from './services/persons'
 class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            persons: [
-            ],
+            persons: [],
             newName: '',
             newNro: '',
             filter: ''
@@ -16,10 +15,11 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        axios
-            .get('http://localhost:3001/persons')
-            .then(response =>
-                this.setState({ persons: response.data }))
+        personService
+            .getAll()
+            .then(response => {
+                this.setState({ persons: response })
+            })
     }
 
     addName = (event) => {
@@ -27,21 +27,45 @@ class App extends React.Component {
         const newPerson = {
             name: this.state.newName,
             number: this.state.newNro,
-            id: this.state.persons[this.state.persons.length - 1].id + 1
         }
-        if (this.state.persons.find((person) => person.name === newPerson.name)) {
-            alert('nimi ' + newPerson.name + ' löytyy jo')
+        const person = this.state.persons.find((person) => person.name === newPerson.name)
+        if (person) {
+            if (window.confirm(newPerson.name + ' löytyy jo, haluatko päivittää numeron')) {
+                personService
+                    .updatePerson(person.id ,newPerson)
+                    .then(response => {
+                        const persons = this.state.persons.filter(p => p.id !== person.id)
+                        this.setState({
+                            persons: persons.concat(response)
+                        })
+                    })
+            }
             this.setState({ newName: '', newNro: '' })
             return
         }
+        personService
+            .createPerson(newPerson)
+            .then(response => {
+                this.setState({
+                    persons: this.state.persons.concat(response),
+                    newName: '',
+                    newNro: ''
+                })
+            })
+            .catch(error => {
+                alert('poop happened')
+            })
+    }
 
-        const persons = this.state.persons.concat(newPerson)
-
-        this.setState({
-            persons,
-            newName: '',
-            newNro: ''
-        })
+    deletePerson = (person) => {
+        if (window.confirm('haluatko varmasti poistaa ' + person.name)) {
+            personService
+                .deletePerson(person.id)
+                .then(response => {
+                    const persons = this.state.persons.filter(p => p.id !== person.id)
+                    this.setState({ persons })
+                })
+        }
     }
 
     handleName = (event) => {
@@ -57,7 +81,7 @@ class App extends React.Component {
     }
 
     render() {
-        
+
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
@@ -72,11 +96,14 @@ class App extends React.Component {
                     handleName={this.handleName}
                     addName={this.addName} />
                 <h2>Numerot</h2>
-                <ul>
-                    <ListPersons
-                        persons={this.state.persons}
-                        filter={this.state.filter} />
-                </ul>
+                <table>
+                    <tbody>
+                        <ListPersons
+                            persons={this.state.persons}
+                            filter={this.state.filter}
+                            deletePerson={this.deletePerson} />
+                    </tbody>
+                </table>
             </div>
         )
     }

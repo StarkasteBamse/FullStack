@@ -3,6 +3,7 @@ import Filter from './components/Filter'
 import ListPersons from './components/ListPersons'
 import AddPerson from './components/AddPerson'
 import personService from './services/persons'
+import Alert from './components/Alert'
 class App extends React.Component {
     constructor(props) {
         super(props)
@@ -10,7 +11,8 @@ class App extends React.Component {
             persons: [],
             newName: '',
             newNro: '',
-            filter: ''
+            filter: '',
+            message: null
         }
     }
 
@@ -32,12 +34,27 @@ class App extends React.Component {
         if (person) {
             if (window.confirm(newPerson.name + ' löytyy jo, haluatko päivittää numeron')) {
                 personService
-                    .updatePerson(person.id ,newPerson)
+                    .updatePerson(person.id, newPerson)
                     .then(response => {
                         const persons = this.state.persons.filter(p => p.id !== person.id)
                         this.setState({
                             persons: persons.concat(response)
                         })
+                        this.message(`muutetiin henkilön ${response.name} numero uuteen: ${response.number}`)
+                    })
+                    .catch(error => {
+                        personService
+                            .createPerson(newPerson)
+                            .then(response => {
+                                const persons = this.state.persons.filter(p => p.id !== person.id)
+                                this.setState({
+                                    persons: persons.concat(response)                                    
+                                })
+                                this.message(`henkilö ${response.name}, oli poistettu palvelimelta, lisätiin uudestaan`)
+                            })
+                            .catch(error => {
+                                alert('poop happened')
+                            })
                     })
             }
             this.setState({ newName: '', newNro: '' })
@@ -51,6 +68,7 @@ class App extends React.Component {
                     newName: '',
                     newNro: ''
                 })
+                this.message(`lisättiin ${response.name}`)
             })
             .catch(error => {
                 alert('poop happened')
@@ -64,8 +82,16 @@ class App extends React.Component {
                 .then(response => {
                     const persons = this.state.persons.filter(p => p.id !== person.id)
                     this.setState({ persons })
+                    this.message(`poistettiin ${person.name}`)
                 })
         }
+    }
+
+    message = (message) => {
+        this.setState({ message })
+        setTimeout(() => {
+            this.setState({ message: null })
+        }, 5000)
     }
 
     handleName = (event) => {
@@ -85,6 +111,7 @@ class App extends React.Component {
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
+                <Alert message={this.state.message} />
                 <Filter
                     handleFilter={this.handleFilter}
                     filter={this.state.filter} />

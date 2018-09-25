@@ -2,3 +2,8 @@
 
 # dotenv environment variables file
 **/.dotenv
+
+# Dependency directories
+**/node_modules/
+**/jspm_packages/
+

@@ -3,6 +3,7 @@
 # dotenv environment variables file
 **/.env
 Osa4/.env
+
 # Dependency directories
 **/node_modules/
 **/jspm_packages/

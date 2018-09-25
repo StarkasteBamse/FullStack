@@ -1,8 +1,8 @@
 /hiekkalaatikko
 
 # dotenv environment variables file
-**/.dotenv
-
+**/.env
+Osa4/.env
 # Dependency directories
 **/node_modules/
 **/jspm_packages/

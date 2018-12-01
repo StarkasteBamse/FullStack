@@ -90,7 +90,7 @@ describe('api/blogs POST', () => {
             .expect(201)
             .expect('Content-Type', /application\/json/)
 
-         
+
         const response = await api.get('/api/blogs/')
 
         const titles = response.body.map(r => r.title)
@@ -111,9 +111,9 @@ describe('api/blogs POST', () => {
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
-        
-        expect(res.body.likes).toBe(0)    
-            
+
+        expect(res.body.likes).toBe(0)
+
         const response = await api.get('/api/blogs/')
 
         const likes = response.body.map(r => r.likes)
@@ -121,6 +121,43 @@ describe('api/blogs POST', () => {
         expect(likes).toContain(0)
     })
 
+    test('a blog without title field will be rejected', async () => {
+        const newBlog = {
+            author: 'Mr Test',
+            url: 'http://www.test.org/noTitle',
+            likes: 123
+        }
+
+        const res = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+    })
+
+    test('a blog without url field will be rejected', async () => {
+        const newBlog = {
+            title: 'where is my url',
+            author: 'Mr Test',
+            likes: 123
+        }
+
+        const res = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+    })
+
+    test('a blog without title and url field will be rejected', async () => {
+        const newBlog = {
+            author: 'Mr Test',
+            likes: 123
+        }
+
+        const res = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+    })
 })
 
 

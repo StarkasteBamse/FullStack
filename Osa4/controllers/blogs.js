@@ -8,6 +8,7 @@ blogsRouter.get('/', async (request, response) => {
         response.json(blogs)
     } catch (exeption) {
         console.log(exeption)
+        response.status(500).json({ error: 'something went wrong...' })
     }
 
 })
@@ -15,6 +16,10 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
     try {
         const body = request.body
+
+        if (body.title === undefined || body.url === undefined) {
+            return response.status(400).json({ error: 'content missing'})
+        }
 
         const blog = new Blog({
             title: body.title,
@@ -26,6 +31,7 @@ blogsRouter.post('/', async (request, response) => {
         response.status(201).json(savedBlog)
     } catch (exeption) {
         console.log(exeption)
+        response.status(500).json({ error: 'something went wrong...' })
     }
 })
 

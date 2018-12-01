@@ -80,7 +80,7 @@ describe('api/blogs POST', () => {
         const newBlog = {
             title: 'blogs test',
             author: 'Mr Test',
-            url: 'http://www.test.org',
+            url: 'http://www.test.org/test',
             likes: 1
         }
 
@@ -98,6 +98,29 @@ describe('api/blogs POST', () => {
         expect(response.body.length).toBe(initialBlogs.length + 1)
         expect(titles).toContain('blogs test')
     })
+
+    test('a blog without likes field, will have zero likes', async () => {
+        const newBlog = {
+            title: 'Why nobody likes me',
+            author: 'Mr Test',
+            url: 'http://www.test.org/why'
+        }
+
+        const res = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        
+        expect(res.body.likes).toBe(0)    
+            
+        const response = await api.get('/api/blogs/')
+
+        const likes = response.body.map(r => r.likes)
+
+        expect(likes).toContain(0)
+    })
+
 })
 
 

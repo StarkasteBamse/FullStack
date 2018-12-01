@@ -1,5 +1,5 @@
 const listHelper = require('../utils/blog_helper')
-describe.skip('blog helper skip'), () => {
+
 const listWithOneBlog = [
   {
     _id: '5a422aa71b54a676234d17f8',
@@ -116,4 +116,3 @@ describe('most likes', () => {
   })
 })
 
-}

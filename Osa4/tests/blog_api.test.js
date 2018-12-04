@@ -105,6 +105,34 @@ describe('clean DB with test data', () => {
             })
         })
     })
+    describe('/api/blogs/:id DELETE', async () => {
+        let addedBlog
+    
+        beforeAll(async () => {
+          addedBlog = new Blog({
+            title: 'poisto pyynnöllä HTTP DELETE',
+            author: 'testi',
+            url: "http://deleted.com",
+            likes: 0
+          })
+          await addedBlog.save()
+        })
+    
+        test('a blog can be removed', async () => {
+          const notesAtStart = await blogsInDB()
+    
+          await api
+            .delete(`/api/blogs/${addedBlog._id}`)
+            .expect(204)
+    
+          const notesAfterOperation = await blogsInDB()
+    
+          const titles = notesAfterOperation.map(r => r.titles)
+    
+          expect(titles).not.toContain(addedBlog.title)
+          expect(notesAfterOperation.length).toBe(notesAtStart.length - 1)
+        })
+      })
 })
 
 afterAll(() => {

@@ -19,7 +19,7 @@ describe('clean DB with test data', () => {
 
             expect(response.body.length).toBe(blogsInDatabase.length)
 
-            const returnedTitles = response.body.map(b => b.title)
+            const returnedTitles = response.body.map(r => r.title)
             blogsInDatabase.forEach(blog => {
                 expect(returnedTitles).toContain(blog.title)
             })
@@ -48,7 +48,7 @@ describe('clean DB with test data', () => {
             const blogsAfterPost = await blogsInDB()
             expect(blogsAfterPost.length).toBe(blogsAtStart.length + 1)
 
-            const titles = blogsAfterPost.map(b => b.title)
+            const titles = blogsAfterPost.map(r => r.title)
             expect(titles).toContain('blogs test')
         })
 
@@ -72,7 +72,7 @@ describe('clean DB with test data', () => {
             const blogsAfterPost = await blogsInDB()
             expect(blogsAfterPost.length).toBe(blogsAtStart.length + 1)
 
-            const likes = blogsAfterPost.map(b => b.likes)
+            const likes = blogsAfterPost.map(r => r.likes)
             expect(likes).toContain(0)
         })
 
@@ -132,7 +132,41 @@ describe('clean DB with test data', () => {
           expect(titles).not.toContain(addedBlog.title)
           expect(notesAfterOperation.length).toBe(notesAtStart.length - 1)
         })
-      })
+    })
+    describe('/api/blogs/:id PUT', async () => {
+        let addedBlog
+    
+        beforeAll(async () => {
+          addedBlog = new Blog({
+            title: 'Muokaa minua',
+            author: 'MR Testi',
+            url: "http://edited.com",
+            likes: 0
+          })
+          await addedBlog.save()
+        })
+
+        test('a blog can be edited', async () => {
+            editedBlog = new Blog({
+                _id: addedBlog._id, 
+                title: 'Muokattu', 
+                author: 'Mr editor', 
+                url: 'https://edited.com', 
+                likes: 1}
+            )
+            await api
+              .put(`/api/blogs/${editedBlog._id}`)
+              .send(editedBlog)
+              .expect(200)
+      
+            const notesAfterOperation = await blogsInDB()
+      
+            const titles = notesAfterOperation.map(r => r.title)
+      
+            expect(titles).not.toContain(addedBlog.title)
+            expect(titles).toContain(editedBlog.title)
+          })
+    })
 })
 
 afterAll(() => {

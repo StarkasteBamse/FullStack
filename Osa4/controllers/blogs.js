@@ -4,14 +4,6 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
 
-const getTokenFrom = (request) => {
-    const authorization = request.get('authorization')
-    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-        return authorization.substring(7)
-    }
-    return null
-}
-
 blogsRouter.get('/', async (request, response) => {
     try {
         const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -26,10 +18,10 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
     try {
         const body = request.body
-        const token = getTokenFrom(request)
-        const decodedToken = jwt.verify(token, process.env.SECRET)
 
-        if (!token || !decodedToken.id) {
+        const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+        if (!request.token || !decodedToken.id) {
             return response.status(401).json({ error: 'token missing or invalid' })
         }
 
@@ -65,13 +57,34 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.delete("/:id", async (request, response) => {
     try {
-        await Blog.findByIdAndRemove(request.params.id)
+        if (!request.token) {
+            return response.status(401).json({ error: 'token missing' })
+        }
 
-        response.status(204).end()
-    } catch (exeption) {
-        console.log(exeption)
-        response.status(400).json({ error: 'malformatted id' })
+        const decodedToken = jwt.verify(request.token, process.env.SECRET)
+        if (!decodedToken.id) {
+            return response.status(401).json({ error: 'token invalid' })
+        }
+
+        const blog = await Blog.findById(request.params.id)
+        if (blog === null) {
+            return response.status(404).json({ error: 'missing blog by id'})
+        } else if (blog.user.toString() === decodedToken.id.toString()) {
+            await Blog.findByIdAndRemove(request.params.id)
+            return response.status(204).end()
+        }
+        
+        response.status(401).json({ error: 'don\'t try deleting other peoples blogs'})
+    } catch (exception) {
+        if (exception.name === 'JsonWebTokenError') {
+            response.status(401).json({ error: exception.message })
+        } else {
+            console.log(exception)
+            response.status(500).json({ error: 'something went wrong...' })
+        }
     }
+
+
 })
 
 blogsRouter.put('/:id', async (request, response) => {

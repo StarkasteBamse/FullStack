@@ -63,56 +63,56 @@ const blogs = [
     __v: 0
   }
 ]
-
-describe('dummy', () => {
-  test('dummy is called', () => {
-    const result = listHelper.dummy(blogs)
-    expect(result).toBe(1)
-  })
-})
-
-describe('total likes', () => {
-  test('when list has only one blog equals the likes of that', () => {
-    const result = listHelper.totalLikes(listWithOneBlog)
-    expect(result).toBe(5)
+describe('stupid tests for giggle', () => {
+  describe('dummy', () => {
+    test('dummy is called', () => {
+      const result = listHelper.dummy(blogs)
+      expect(result).toBe(1)
+    })
   })
 
-  test('of empty list is zero', () => {
-    const result = listHelper.totalLikes(emptyList)
-    expect(result).toBe(0)
+  describe('total likes', () => {
+    test('when list has only one blog equals the likes of that', () => {
+      const result = listHelper.totalLikes(listWithOneBlog)
+      expect(result).toBe(5)
+    })
+
+    test('of empty list is zero', () => {
+      const result = listHelper.totalLikes(emptyList)
+      expect(result).toBe(0)
+    })
+
+    test('of a bigger list is calculated right', () => {
+      const result = listHelper.totalLikes(blogs)
+      expect(result).toBe(36)
+    })
   })
 
-  test('of a bigger list is calculated right', () => {
-    const result = listHelper.totalLikes(blogs)
-    expect(result).toBe(36)
+  describe('favorite blog', () => {
+    test('returns most liked blog', () => {
+      const result = listHelper.favoriteBlog(blogs)
+      expect(result).toEqual({
+        _id: "5a422b3a1b54a676234d17f9",
+        title: "Canonical string reduction",
+        author: "Edsger W. Dijkstra",
+        url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+        likes: 12,
+        __v: 0
+      })
+    })
   })
-})
 
-describe('favorite blog', () => {
-  test('returns most liked blog', () => {
-    const result = listHelper.favoriteBlog(blogs)
-    expect(result).toEqual({
-      _id: "5a422b3a1b54a676234d17f9",
-      title: "Canonical string reduction",
-      author: "Edsger W. Dijkstra",
-      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-      likes: 12,
-      __v: 0
+  describe('most blogs', () => {
+    test('who has the most blogs', () => {
+      const result = listHelper.mostBlogs(blogs)
+      expect(result).toEqual({ author: 'Robert C. Martin', blogs: 3 })
+    })
+  })
+
+  describe('most likes', () => {
+    test('who has the most likes', () => {
+      const result = listHelper.mostLikes(blogs)
+      expect(result).toEqual({ author: 'Edsger W. Dijkstra', likes: 17 })
     })
   })
 })
-
-describe('most blogs', () => {
-  test('who has the most blogs', () => {
-    const result = listHelper.mostBlogs(blogs)
-    expect(result).toEqual({ author: 'Robert C. Martin', blogs: 3 })
-  })
-})
-
-describe('most likes', () => {
-  test('who has the most likes', () => {
-    const result = listHelper.mostLikes(blogs)
-    expect(result).toEqual({  author: 'Edsger W. Dijkstra', likes: 17 })
-  })
-})
-

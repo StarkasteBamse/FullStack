@@ -2,11 +2,13 @@ const supertest = require('supertest')
 const { app, server } = require('../index')
 const api = supertest(app)
 const Blog = require('../models/blog')
-const { initialBlogs, blogsInDB, cleanDB } = require('./test_helper')
+const { initialBlogs, blogsInDB, cleanBlogDB } = require('./blogTest_helper')
+const User = require('../models/user')
+const {initialUsers, usersInDB, cleanUserDB} = require('./userTest_helper')
 
 
-describe('clean DB with test data', () => {
-    beforeAll(cleanDB)
+describe('running blog test data to DB', () => {
+    beforeAll(cleanBlogDB)
 
     describe('api/blogs GET', () => {
 
@@ -166,6 +168,90 @@ describe('clean DB with test data', () => {
             expect(titles).not.toContain(addedBlog.title)
             expect(titles).toContain(editedBlog.title)
           })
+    })
+})
+
+describe('running user test data to DB', () => {
+    beforeAll(cleanUserDB)
+
+    describe('/API/USERS GET', () => {
+
+        test('all users are returned', async () => {
+            const usersInDatabase = await usersInDB()
+            const response = await api
+                .get('/api/users')
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+
+            expect(response.body.length).toBe(usersInDatabase.length)
+
+            const returnedUsers = response.body.map(r => r.username)
+            usersInDatabase.forEach(user => {
+                expect(returnedUsers).toContain(user.username)
+            })
+        })
+
+    })
+
+    describe('/API/USERS POST', () => {
+
+        test('user can be created with required fields', async () => {
+            const newUser = {
+                username: 'testeri',
+                name: 'Mr Test',
+                password: 'hunter2'
+            }
+            
+            const usersAtStart = await usersInDB()
+
+            const response = await api
+                .post('/api/users')
+                .send(newUser)
+                .expect(201)
+                .expect('Content-Type', /application\/json/)
+            
+            expect(response.body.adult).toBe(true)
+
+            const usersAfterOperation = await usersInDB()
+            expect(usersAfterOperation.length).toBe(usersAtStart.length + 1)
+
+            const userNames = usersAfterOperation.map(user => user.username)
+            expect(userNames).toContain(newUser.username)
+        })
+
+
+        test('user can\'t be created with password shorter than 3 letters', async () => {
+            const shortPassword = {
+                username: 'short',
+                name: 'Mr Test',
+                password: '12'
+            }
+
+            const response = await api
+                .post('/api/users')
+                .send(shortPassword)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+            
+            expect(response.body).toEqual({error: 'password too short, minimum lenght 3'})
+        })
+
+        test('user can\'t be created with duplicate username', async () => {
+            const duplicate = {
+                username: 'MuPe',
+                name: 'Mr Test',
+                password: '123'
+            }
+
+            const response = await api
+                .post('/api/users')
+                .send(duplicate)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
+                
+            
+            expect(response.body).toEqual({error: 'username must be unique'})
+        })
     })
 })
 

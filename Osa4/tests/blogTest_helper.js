@@ -26,7 +26,7 @@ const blogsInDB = async () => {
     return blogs
 }
 
-const cleanDB = async () => {
+const cleanBlogDB = async () => {
     await Blog.deleteMany({})
 
     const blogObjects = initialBlogs.map(blog => new Blog(blog))
@@ -36,5 +36,5 @@ const cleanDB = async () => {
 
 
 module.exports = {
-    initialBlogs, blogsInDB, cleanDB
+    initialBlogs, blogsInDB, cleanBlogDB
 }

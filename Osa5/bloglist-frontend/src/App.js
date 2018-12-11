@@ -142,6 +142,7 @@ class App extends React.Component {
 
   deleteBlog = async (blogToDelete) => {
     try {
+      if(window.confirm("Are you sure that you want to remove this blog? " + blogToDelete.title)){
       await blogService.deleteBlog(blogToDelete)
       this.setState({
         blogs: this.state.blogs.filter((blog) => blog.id !== blogToDelete.id),
@@ -150,7 +151,7 @@ class App extends React.Component {
       setTimeout(() => {
         this.setState({ success: null })
       }, 3000)
-      console.log(this.state.blogs)
+    }
     } catch (exception) {
       this.setState({
         error: exception.toString()

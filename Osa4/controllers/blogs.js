@@ -38,7 +38,7 @@ blogsRouter.post('/', async (request, response) => {
             author: body.author,
             url: body.url,
             likes: body.likes || 0,
-            user: user._id
+            user: user
         })
 
         const savedBlog = await blog.save()
@@ -71,7 +71,7 @@ blogsRouter.delete("/:id", async (request, response) => {
         const blog = await Blog.findById(request.params.id)
         if (blog === null) {
             return response.status(404).json({ error: 'missing blog by id'})
-        } else if (blog.user.toString() === decodedToken.id.toString()) {
+        } else if (!blog.user || blog.user.toString() === decodedToken.id.toString()) {
             await Blog.findByIdAndRemove(request.params.id)
             return response.status(204).end()
         }
@@ -102,7 +102,7 @@ blogsRouter.put('/:id', async (request, response) => {
         }
 
         const editedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-        response.status(200).json(editedBlog)
+        response.status(200).json(Blog.format(editedBlog))
     } catch (exeption) {
         console.log(exeption)
         response.status(500).json({ error: 'something went wrong...' })

@@ -2,6 +2,8 @@ import React from 'react'
 import Blog from './components/Blog'
 import Error from './components/Error'
 import Success from './components/Success'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -23,10 +25,10 @@ class App extends React.Component {
     }
   }
 
-  componentDidMount() {
-    blogService.getAll().then(blogs =>
-      this.setState({ blogs })
-    )
+  async componentDidMount() {
+    let blogs = await blogService.getAll()
+    blogs.sort((a, b) => b.likes - a.likes)
+    this.setState({ blogs })
 
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
@@ -86,6 +88,7 @@ class App extends React.Component {
       }
 
       const newBlog = await blogService.create(blogObject)
+      console.log(newBlog)
       this.setState({
         blogs: this.state.blogs.concat(newBlog),
         newBlog: {
@@ -98,7 +101,56 @@ class App extends React.Component {
       setTimeout(() => {
         this.setState({ success: null })
       }, 3000)
+      this.blogForm.toggleVisibility()
+    } catch (exception) {
+      this.setState({
+        error: exception.toString()
+      })
+      setTimeout(() => {
+        this.setState({ error: null })
+      }, 3000)
+    }
+  }
 
+  addLike = async (blog) => {
+    try {
+      const blogObject = { ...blog, likes: blog.likes + 1 }
+
+      const updatedBlog = await blogService.update(blogObject)
+
+      this.setState({
+        blogs: this.state.blogs.map(blog => blog.id !== updatedBlog.id ? blog : updatedBlog),
+        success: "thumbs up radical"
+      })
+
+      setTimeout(() => {
+        this.setState({ success: null })
+      }, 3000)
+      let blogs = await blogService.getAll()
+      blogs.sort((a, b) => b.likes - a.likes)
+      this.setState({ blogs })
+      return updatedBlog
+    } catch (exception) {
+      this.setState({
+        error: exception.toString()
+      })
+      setTimeout(() => {
+        this.setState({ error: null })
+      }, 3000)
+    }
+  }
+
+  deleteBlog = async (blogToDelete) => {
+    try {
+      await blogService.deleteBlog(blogToDelete)
+      this.setState({
+        blogs: this.state.blogs.filter((blog) => blog.id !== blogToDelete.id),
+        success: "Blog " + blogToDelete.title + " removed"
+      }) 
+      setTimeout(() => {
+        this.setState({ success: null })
+      }, 3000)
+      console.log(this.state.blogs)
     } catch (exception) {
       this.setState({
         error: exception.toString()
@@ -136,45 +188,29 @@ class App extends React.Component {
       </div>
     )
 
-    const blogForm = () => (
+    const blogService = () => (
       <div>
         <h2>blogs</h2>
         <form onSubmit={this.logout}>
           <div>{this.state.user.name} logged in<button type="submit">logout</button></div>
         </form>
-        <h3>create new</h3>
-        <form onSubmit={this.addBlog}>
-          <div>author
-            <input
-              type="text"
-              name="author"
-              value={this.state.newBlog.author}
-              onChange={this.handleBlogChange}
-            />
-          </div>
-          <div>title
-            <input
-              type="text"
-              name="title"
-              value={this.state.newBlog.title}
-              onChange={this.handleBlogChange}
-            />
-          </div>
-          <div>url
-            <input
-              type="text"
-              name="url"
-              value={this.state.newBlog.url}
-              onChange={this.handleBlogChange}
-            />
-          </div>
-          <div>
-            <button type="submit">create</button>
-          </div>
-        </form>
+        <Togglable buttonLabel="New blog" ref={component => this.blogForm = component}>
+          <BlogForm
+            onSumbit={this.addBlog}
+            handleChange={this.handleBlogChange}
+            author={this.state.newBlog.author}
+            title={this.state.newBlog.title}
+            url={this.state.newBlog.url}
+          />
+        </Togglable>
 
         {this.state.blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog
+            blog={blog}
+            key={blog.id}
+            addLike={this.addLike}
+            deleteBlog={this.deleteBlog}
+          />
         )}
       </div>
     )
@@ -187,7 +223,7 @@ class App extends React.Component {
 
         {this.state.user === null ?
           loginForm() :
-          blogForm()
+          blogService()
         }
 
       </div>

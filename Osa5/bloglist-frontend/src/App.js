@@ -88,7 +88,7 @@ class App extends React.Component {
       }
 
       const newBlog = await blogService.create(blogObject)
-      console.log(newBlog)
+      
       this.setState({
         blogs: this.state.blogs.concat(newBlog),
         newBlog: {
@@ -197,7 +197,7 @@ class App extends React.Component {
         </form>
         <Togglable buttonLabel="New blog" ref={component => this.blogForm = component}>
           <BlogForm
-            onSumbit={this.addBlog}
+            onSubmit={this.addBlog}
             handleChange={this.handleBlogChange}
             author={this.state.newBlog.author}
             title={this.state.newBlog.title}

@@ -47,8 +47,8 @@ class Blog extends React.Component {
       <div style = { blogStyle } >
       {
         this.state.showMore ?
-          <div>
-            <p onClick={this.toggleShowMore}>{this.state.blog.title} {this.state.blog.author}</p>
+          <div className="content">
+            <p className="nameAndTitle" onClick={this.toggleShowMore}>{this.state.blog.title} {this.state.blog.author}</p>
             <a href={this.state.blog.url}>{this.state.blog.url}</a>
             <div>
               {this.state.blog.likes} likes <input type="button" onClick={this.addLikes} value="like" />
@@ -66,7 +66,7 @@ class Blog extends React.Component {
             {deleteButton()}
           </div>
           :
-          <div onClick={this.toggleShowMore}>
+          <div className="nameAndTitle" onClick={this.toggleShowMore}>
             {this.state.blog.title} {this.state.blog.author}
           </div>
       }

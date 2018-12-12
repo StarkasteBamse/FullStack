@@ -165,7 +165,7 @@ class App extends React.Component {
   render() {
 
     const loginForm = () => (
-      <div>
+      <div className="loginForm">
         <h2>Please log in to the application</h2>
         <form onSubmit={this.login}>
           <div>username
@@ -190,7 +190,7 @@ class App extends React.Component {
     )
 
     const blogService = () => (
-      <div>
+      <div className="blogService">
         <h2>blogs</h2>
         <form onSubmit={this.logout}>
           <div>{this.state.user.name} logged in<button type="submit">logout</button></div>

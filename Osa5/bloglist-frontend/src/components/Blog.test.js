@@ -42,3 +42,7 @@ describe('<Blog />', () => {
         expect(contentDiv.text()).toContain(blog.url)
     })
 })
+
+afterAll(() => {
+    window.localStorage.clear()
+})

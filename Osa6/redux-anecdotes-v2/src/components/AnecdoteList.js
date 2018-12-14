@@ -1,17 +1,14 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { voteAnecdote } from './../reducers/anecdoteReducer'
 import { showNotification, hideNotification } from '../reducers/notificationReducer'
 
 class AnecdoteList extends React.Component {
   render() {
-    const raw = this.props.store.getState().anecdotes
-    const filter = this.props.store.getState().filter
-    const anecdotes = raw.filter((anecdote) =>
-      anecdote.content.toLowerCase().indexOf(filter.toLowerCase()) > -1)
     return (
       <div>
         <h2>Anecdotes</h2>
-        {anecdotes.sort((a, b) => b.votes - a.votes).map(anecdote =>
+        {this.props.filteredAnecdotes.sort((a, b) => b.votes - a.votes).map(anecdote =>
           <div key={anecdote.id}>
             <div>
               {anecdote.content}
@@ -19,10 +16,10 @@ class AnecdoteList extends React.Component {
             <div>
               has {anecdote.votes}
               <button onClick={() => {
-                this.props.store.dispatch(voteAnecdote(anecdote.id))
-                this.props.store.dispatch(showNotification('you voted: ' + anecdote.content))
+                this.props.voteAnecdote(anecdote.id)
+                this.props.showNotification('you voted: ' + anecdote.content)
                 setTimeout(() => {
-                  this.props.store.dispatch(hideNotification())
+                  this.props.hideNotification()
                 }, 5000)
               }}>
                 vote
@@ -35,4 +32,21 @@ class AnecdoteList extends React.Component {
   }
 }
 
-export default AnecdoteList
+const filterAnecdotes = (anecdotes, filter) =>
+  anecdotes.filter((anecdote) => anecdote.content.toLowerCase().indexOf(filter.toLowerCase()) > -1)
+
+
+const mapStateToProps = (state) => {
+  return {
+    filteredAnecdotes: filterAnecdotes(state.anecdotes, state.filter)
+  }
+}
+
+const ConnectedAnecdoteList = connect(
+  mapStateToProps,
+  { voteAnecdote,
+    showNotification,
+    hideNotification }
+)(AnecdoteList)
+
+export default ConnectedAnecdoteList

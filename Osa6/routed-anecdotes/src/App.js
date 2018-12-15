@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Link, NavLink } from 'react-router-dom'
+import { Container, Table, Grid, Image } from 'semantic-ui-react'
 
 const Menu = () => (
   <div style={({
@@ -7,31 +8,36 @@ const Menu = () => (
     borderStyle: 'dotted'
   })}>
     <NavLink exact to="/" activeStyle={{
-    fontWeight: "bold",
-    color: "red",
-    backgroundColor: 'black'
-  }}>anecdotes</NavLink>&nbsp;
+      fontWeight: "bold",
+      color: "red",
+      backgroundColor: 'black'
+    }}>anecdotes</NavLink>&nbsp;
     <NavLink to="/create" activeStyle={{
-    fontWeight: "bold",
-    color: "red",
-    backgroundColor: 'black'
-  }}>create new</NavLink>&nbsp;
+      fontWeight: "bold",
+      color: "red",
+      backgroundColor: 'black'
+    }}>create new</NavLink>&nbsp;
     <NavLink to="/about" activeStyle={{
-    fontWeight: "bold",
-    color: "red",
-    backgroundColor: 'black'
-  }}>about</NavLink>&nbsp;
+      fontWeight: "bold",
+      color: "red",
+      backgroundColor: 'black'
+    }}>about</NavLink>&nbsp;
   </div>
 )
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >
-        <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
-      </li>)}
-    </ul>
+    <Table striped celled>
+      <Table.Body>
+        {anecdotes.map(anecdote =>
+          <Table.Row key={anecdote.id} >
+            <Table.Cell>
+              <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+            </Table.Cell>
+          </Table.Row>)}
+      </Table.Body>
+    </Table>
   </div>
 )
 
@@ -46,14 +52,21 @@ const Anecdote = ({ anecdote }) => (
 const About = () => (
   <div>
     <h2>About anecdote app</h2>
-    <p>According to Wikipedia:</p>
+    <Grid columns={2} divided>
+      <Grid.Column>
+        <p>According to Wikipedia:</p>
 
-    <em>An anecdote is a brief, revealing account of an individual person or an incident.
-      Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself,
-      such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative.
+        <em>An anecdote is a brief, revealing account of an individual person or an incident.
+          Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself,
+          such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative.
       An anecdote is "a story with a point."</em>
 
-    <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
+        <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
+      </Grid.Column>
+      <Grid.Column>
+        <Image src="Ada_Lovelace_portrait.jpg" />
+      </Grid.Column>
+    </Grid>
   </div>
 )
 
@@ -89,7 +102,7 @@ class CreateNew extends React.Component {
       votes: 0
     })
     this.props.history.push('/')
-    this.props.notify('a new anecdote ' +this.state.content+ ' created!')
+    this.props.notify('a new anecdote ' + this.state.content + ' created!')
   }
 
   render() {
@@ -171,7 +184,7 @@ class App extends React.Component {
 
   render() {
     const postIt = () => {
-      if(this.state.notification === '') {
+      if (this.state.notification === '') {
         return ''
       } else {
         return <div style={({
@@ -185,23 +198,26 @@ class App extends React.Component {
       }
     }
     return (
-      <div>
-        <Router>
-          <div>
-            <h1>Software anecdotes</h1>
-            <Menu />
-            {postIt()}
-            <Route exact path="/" render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />
-            <Route path="/about" render={() => <About />} />
-            <Route path="/create" render={({ history }) =>
-              <CreateNew history={history} addNew={this.addNew} notify={this.notify}/>} />
-            <Route path="/anecdotes/:id" render={({ match }) =>
-              <Anecdote anecdote={this.anecdoteById(match.params.id)} />}
-            />
-            <Footer />
-          </div>
-        </Router>
-      </div>
+      <Container>
+        <div>
+          <Router>
+            <div>
+              <h1>Software anecdotes</h1>
+              <Menu />
+              {postIt()}
+              <Route exact path="/" render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />
+              <Route path="/about" render={() => <About />} />
+              <Route path="/create" render={({ history }) =>
+                <CreateNew history={history} addNew={this.addNew} notify={this.notify} />} />
+              <Route path="/anecdotes/:id" render={({ match }) =>
+                <Anecdote anecdote={this.anecdoteById(match.params.id)} />}
+              />
+              <Footer />
+            </div>
+          </Router>
+        </div>
+      </Container>
+
     );
   }
 }
